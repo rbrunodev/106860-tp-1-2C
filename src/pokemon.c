@@ -37,6 +37,8 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 		int leidos = fscanf(archivo, "%[^;];%[^\n]\n", pokemon->nombre, pokemon_type);
 		if (leidos != 2) {
 			fclose(archivo);
+			free(pokemon);
+			free(info);
 			return NULL;
         }
 		if (strcmp(pokemon_type, "F") == 0) {
@@ -54,6 +56,8 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 		} else {
 			printf("Tipo de Pokémon inválido.\n");
 			fclose(archivo);
+			free(pokemon);
+			free(info);
 			return NULL;
 		}
 		for (int i = 0; i < 3; i++) {
@@ -62,6 +66,8 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
             if (ataques_leidos != 3) {
                 printf("Error al leer los ataques del Pokémon.\n");
                 fclose(archivo);
+				free(pokemon);
+				free(info);
                 return NULL;
             }
 			if (strcmp(ataque_type, "F") == 0) {
@@ -79,6 +85,7 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 			} else {
 				printf("Tipo de Ataque inválido.\n");
 				fclose(archivo);
+				free(pokemon);
 				return info;
 			}
         }
@@ -88,6 +95,7 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
             printf("Error al reasignar memoria para los Pokémon.\n");
             fclose(archivo);
             free(info);
+			free(pokemon);
             return NULL;
         }
         info->pokemones[info->cantidad - 1] = *pokemon;
