@@ -17,6 +17,35 @@ struct info_pokemon {
 	size_t cantidad;
 };
 
+void ordenar_pokemones(informacion_pokemon_t *info) {
+	pokemon_t *pokemones_ordenados = malloc(sizeof(pokemon_t) * info->cantidad);
+	if (pokemones_ordenados == NULL) {
+		printf("Error al asignar memoria para los pokemon ordenados.\n");
+		return;
+	}
+
+	for (size_t i = 0; i < info->cantidad; i++) {
+		size_t poke_menor_indice = i;
+		for (size_t j = i + 1; j < info->cantidad; j++) {
+		if (strcmp(info->pokemones[j].nombre, info->pokemones[poke_menor_indice].nombre) < 0) {
+			poke_menor_indice = j;
+		}
+		}
+
+		if (poke_menor_indice != i) {
+		pokemon_t temp = info->pokemones[i];
+		info->pokemones[i] = info->pokemones[poke_menor_indice];
+		info->pokemones[poke_menor_indice] = temp;
+		}
+	}
+
+	for (size_t i = 0; i < info->cantidad; i++) {
+		pokemones_ordenados[i] = info->pokemones[i];
+	}
+
+	free(pokemones_ordenados);
+}
+
 informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 {
 	informacion_pokemon_t *info = malloc(sizeof(informacion_pokemon_t));
@@ -101,14 +130,18 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
         info->pokemones[info->cantidad - 1] = *pokemon;
 	}
 
-	fclose(archivo);
 	free(pokemon);
+	ordenar_pokemones(info);
+	fclose(archivo);
 
 	return info;
 }
 
 pokemon_t *pokemon_buscar(informacion_pokemon_t *ip, const char *nombre)
 {
+	if(!ip || !nombre)
+		return NULL;
+
 	for(int i = 0; i < ip->cantidad; i++){
 		if(strcmp(ip->pokemones[i].nombre, nombre) == 0){
 			return &ip->pokemones[i];
@@ -154,22 +187,25 @@ const struct ataque *pokemon_buscar_ataque(pokemon_t *pokemon, const char *nombr
 	return NULL;
 }
 
-int compare(const void *a, const void *b){
-	const pokemon_t *pokemonA = (const pokemon_t *)a;
-    const pokemon_t *pokemonB = (const pokemon_t *)b;
+// int compare(const void *a, const void *b){
+// 	const pokemon_t *pokemonA = (const pokemon_t *)a;
+//     const pokemon_t *pokemonB = (const pokemon_t *)b;
 
-    return strcmp(pokemonA->nombre, pokemonB->nombre);
-}
+//     return strcmp(pokemonA->nombre, pokemonB->nombre);
+// }
 
-void ordenar_pokemones(informacion_pokemon_t *ip){
-	qsort(ip->pokemones, ip->cantidad, sizeof(pokemon_t), compare);
-}
+// void ordenar_pokemones(informacion_pokemon_t *ip){
+// 	qsort(ip->pokemones, ip->cantidad, sizeof(pokemon_t), compare);
+// }
+
+
 
 int con_cada_pokemon(informacion_pokemon_t *ip, void (*f)(pokemon_t *, void *), void *aux)
 {
-	ordenar_pokemones(ip);
-
 	int cantidad_itinerados = 0;
+
+	if(!ip || !f)
+		return cantidad_itinerados;
 
 	for(int i = 0; i < ip->cantidad; i++){
 		f(&ip->pokemones[i], aux);
@@ -183,7 +219,12 @@ int con_cada_ataque(pokemon_t *pokemon, void (*f)(const struct ataque *, void *)
 {
 	int cantidad_itinerados = 0;
 
+	if(!pokemon || !f)
+		return cantidad_itinerados;
+
 	for(int i = 0; i < 4; i++){
+		if (pokemon->ataques[i].nombre[0] == '\0') 
+			break;
 		f(&pokemon->ataques[i], aux);
 		cantidad_itinerados++;
 	}
@@ -193,6 +234,9 @@ int con_cada_ataque(pokemon_t *pokemon, void (*f)(const struct ataque *, void *)
 
 void pokemon_destruir_todo(informacion_pokemon_t *ip)
 {
+	if(!ip)
+		return;
+
 	free(ip->pokemones);
 	free(ip);
 }
