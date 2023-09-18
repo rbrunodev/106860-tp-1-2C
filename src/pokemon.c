@@ -102,6 +102,7 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 	}
 
 	fclose(archivo);
+	free(pokemon);
 
 	return info;
 }
