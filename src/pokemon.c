@@ -58,7 +58,7 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 		}
 		for (int i = 0; i < 3; i++) {
 			char ataque_type[20];
-			int ataques_leidos = fscanf(archivo, "%[^;];%[^;];%d\n", pokemon->ataques[i].nombre, ataque_type, &pokemon->ataques[i].poder);
+			int ataques_leidos = fscanf(archivo, "%[^;];%[^;];%u\n", pokemon->ataques[i].nombre, ataque_type, &pokemon->ataques[i].poder);
             if (ataques_leidos != 3) {
                 printf("Error al leer los ataques del Pokémon.\n");
                 fclose(archivo);
