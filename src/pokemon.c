@@ -17,33 +17,24 @@ struct info_pokemon {
 	size_t cantidad;
 };
 
-void ordenar_pokemones(informacion_pokemon_t *info) {
-	pokemon_t *pokemones_ordenados = malloc(sizeof(pokemon_t) * info->cantidad);
-	if (pokemones_ordenados == NULL) {
-		printf("Error al asignar memoria para los pokemon ordenados.\n");
-		return;
-	}
+void compare(pokemon_t *a, pokemon_t *b) {
+    pokemon_t temp = *a;
+    *a = *b;
+    *b = temp;
+}
 
-	for (size_t i = 0; i < info->cantidad; i++) {
-		size_t poke_menor_indice = i;
-		for (size_t j = i + 1; j < info->cantidad; j++) {
-		if (strcmp(info->pokemones[j].nombre, info->pokemones[poke_menor_indice].nombre) < 0) {
-			poke_menor_indice = j;
-		}
-		}
-
-		if (poke_menor_indice != i) {
-		pokemon_t temp = info->pokemones[i];
-		info->pokemones[i] = info->pokemones[poke_menor_indice];
-		info->pokemones[poke_menor_indice] = temp;
-		}
-	}
-
-	for (size_t i = 0; i < info->cantidad; i++) {
-		pokemones_ordenados[i] = info->pokemones[i];
-	}
-
-	free(pokemones_ordenados);
+void ordenar_pokemones(informacion_pokemon_t *ip) {
+    for (size_t i = 0; i < ip->cantidad - 1; i++) {
+        size_t min = i;
+        for (size_t j = i + 1; j < ip->cantidad; j++) {
+            if (strcmp(ip->pokemones[j].nombre, ip->pokemones[min].nombre) < 0) {
+                min = j;
+            }
+        }
+        if (min != i) {
+            compare(&ip->pokemones[i], &ip->pokemones[min]);
+        }
+    }
 }
 
 informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
@@ -52,10 +43,10 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 	info->cantidad = 0;
 	info->pokemones = NULL;
 
-	FILE *archivo = fopen(path, "r"); //check
+	FILE *archivo = fopen(path, "r"); 
 
 	if(!archivo){
-		printf("No se pudo abrir el archivo (%s )\n", strerror(errno)); //check	
+		printf("No se pudo abrir el archivo (%s )\n", strerror(errno)); 
 		free(info);
 		return NULL;
 	}
@@ -186,19 +177,6 @@ const struct ataque *pokemon_buscar_ataque(pokemon_t *pokemon, const char *nombr
 
 	return NULL;
 }
-
-// int compare(const void *a, const void *b){
-// 	const pokemon_t *pokemonA = (const pokemon_t *)a;
-//     const pokemon_t *pokemonB = (const pokemon_t *)b;
-
-//     return strcmp(pokemonA->nombre, pokemonB->nombre);
-// }
-
-// void ordenar_pokemones(informacion_pokemon_t *ip){
-// 	qsort(ip->pokemones, ip->cantidad, sizeof(pokemon_t), compare);
-// }
-
-
 
 int con_cada_pokemon(informacion_pokemon_t *ip, void (*f)(pokemon_t *, void *), void *aux)
 {
