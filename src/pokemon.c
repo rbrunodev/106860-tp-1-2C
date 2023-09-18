@@ -210,7 +210,7 @@ int con_cada_ataque(pokemon_t *pokemon,
 
   for (int i = 0; i < 4; i++) {
     if (pokemon->ataques[i].nombre[0] == '\0')
-      break;
+      continue;
     f(&pokemon->ataques[i], aux);
     cantidad_itinerados++;
   }
