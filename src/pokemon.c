@@ -38,7 +38,16 @@ void ordenar_pokemones(informacion_pokemon_t *ip) {
 }
 
 informacion_pokemon_t *pokemon_cargar_archivo(const char *path) {
+  if (path == NULL) {
+    printf("Error al pasar el path del archivo.\n");
+    return NULL;
+  }
   informacion_pokemon_t *info = malloc(sizeof(informacion_pokemon_t));
+  if (!info) {
+    printf("Error al asignar memoria.\n");
+    return NULL;
+  }
+
   info->cantidad = 0;
   info->pokemones = NULL;
 
@@ -59,7 +68,7 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path) {
       fclose(archivo);
       free(pokemon);
       free(info);
-      return NULL;
+      continue;
     }
     if (strcmp(pokemon_type, "F") == 0) {
       pokemon->tipo = FUEGO;
@@ -106,8 +115,8 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path) {
         pokemon->ataques[i].tipo = ROCA;
       } else {
         printf("Tipo de Ataque inválido.\n");
-        fclose(archivo);
         free(pokemon);
+        fclose(archivo);
         return info;
       }
     }
@@ -116,9 +125,9 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path) {
         realloc(info->pokemones, sizeof(pokemon_t) * info->cantidad);
     if (!info->pokemones) {
       printf("Error al reasignar memoria para los Pokémon.\n");
-      fclose(archivo);
       free(info);
       free(pokemon);
+      fclose(archivo);
       return NULL;
     }
     info->pokemones[info->cantidad - 1] = *pokemon;
