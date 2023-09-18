@@ -4,23 +4,23 @@
 
 # TP1
 
-## Repositorio de (Nombre Apellido) - (Padrón) - (Mail)
+## Repositorio de Renata Bruno - 106860 - rc.brunoo@gmail.com
 
 - Para compilar:
 
 ```bash
-línea de compilación
+gcc -o pokemon pokemon.c
 ```
 
 - Para ejecutar:
 
 ```bash
-línea de ejecución
+./pokemon
 ```
 
 - Para ejecutar con valgrind:
 ```bash
-línea con valgrind
+valgrind ./pokemon
 ```
 ---
 ##  Funcionamiento
@@ -57,4 +57,10 @@ vector_original = vector;
 ---
 
 ## Respuestas a las preguntas teóricas
-Incluír acá las respuestas a las preguntas del enunciado (si aplica).
+Explicar cómo se logra que los pokemon queden ordenados alfabéticamente y cuál es el costo computacional de esta operación:
+
+Implemento un algoritmo de ordenamiento de complejidad O(n^2) que recorre el vector de pokemones y compara cada uno con el siguiente, si se encuentra un Pokémon con un nombre más pequeño lo intercambia. Esto se repite hasta que no haya más intercambios y el vector esté ordenado.
+
+Explicar con diagramas la disposición de los diferentes elementos en memoria para las diferentes operaciones implementadas:
+
+
